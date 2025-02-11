@@ -1,15 +1,21 @@
 CXX = g++
-CXXFLAGS = -Wall -Wextra -std=c++20 -O2
-TARGET = fenwick
+CXXFLAGS = -std=c++20 -Wall -Wextra -O2
+
 SRC = fenwick.cpp
+OBJ = $(SRC:.cpp=.o)
+EXE = fenwick
 
-all: $(TARGET)
+# Targets
+all: $(EXE)
 
-$(TARGET): $(SRC)
-	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SRC)
+$(EXE): $(OBJ)
+	$(CXX) $(CXXFLAGS) -o $(EXE) $(OBJ)
 
-run: $(TARGET)
-	./$(TARGET)
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+run: $(EXE)
+	./$(EXE)
 
 clean:
-	rm -f $(TARGET)
+	rm -f $(OBJ) $(EXE)
