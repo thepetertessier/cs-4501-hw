@@ -9,7 +9,7 @@ $(TARGET): $(SRC)
 	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SRC)
 
 run: $(TARGET)
-	./$(TARGET)
+	python3 fenwick.py
 
 clean:
 	rm -f $(TARGET)
