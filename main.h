@@ -1,3 +1,7 @@
 #pragma once
-void set_matrix(double matrix[3][3], const double values[3][3]);
+#include <vector>
+
+using namespace std;
+
+void set_matrix(vector<vector<double>> result, const vector<vector<double>> values);
 void set_transformation(std::string &op, int idx);

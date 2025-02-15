@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++20 -Wall -Wextra -O2
+CXXFLAGS = -g -std=c++20 -Wall -Wextra -O2
 
 SRC = main.cpp
 OBJ = $(SRC:.cpp=.o)
