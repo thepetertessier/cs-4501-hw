@@ -3,6 +3,10 @@
 #include <cmath>
 #include <sstream>
 #include <iomanip>
+#include "main.h"
+
+#define MAX_N 100000
+#define MAX_Q 50000
 
 using namespace std;
 
@@ -13,7 +17,7 @@ struct Transformation {
     double a, b; // Parameters: dx, dy for Translate, sx, sy for Scale, d for Rotate
 };
 
-vector<Transformation> transformations;
+Transformation transformations[MAX_N];
 
 pair<double, double> apply_transformations(double x, double y, int l, int r) {
     for (int i = l; i <= r; i++) {
@@ -38,32 +42,18 @@ pair<double, double> apply_transformations(double x, double y, int l, int r) {
 int main() {
     int n, q;
     cin >> n >> q;
-    transformations.resize(n);
     
     for (int i = 0; i < n; i++) {
         string op;
         cin >> op;
-        if (op == "Translate") {
-            double dx, dy;
-            cin >> dx >> dy;
-            transformations[i] = {'T', dx, dy};
-        } else if (op == "Scale") {
-            double sx, sy;
-            cin >> sx >> sy;
-            transformations[i] = {'S', sx, sy};
-        } else if (op == "Rotate") {
-            double d;
-            cin >> d;
-            transformations[i] = {'R', d, 0};
-        }
+        set_transformation(op, i);
     }
     
     for (int i = 0; i < q; i++) {
         char type;
         cin >> type;
         if (type == 'Q') {
-            double x, y;
-            int l, r;
+            int x, y, l, r;
             cin >> x >> y >> l >> r;
             auto [new_x, new_y] = apply_transformations(x, y, l, r);
             cout << fixed << setprecision(5);
@@ -72,20 +62,30 @@ int main() {
             int idx;
             string op;
             cin >> idx >> op;
-            if (op == "Translate") {
-                double dx, dy;
-                cin >> dx >> dy;
-                transformations[idx] = {'T', dx, dy};
-            } else if (op == "Scale") {
-                double sx, sy;
-                cin >> sx >> sy;
-                transformations[idx] = {'S', sx, sy};
-            } else if (op == "Rotate") {
-                double d;
-                cin >> d;
-                transformations[idx] = {'R', d, 0};
-            }
+            set_transformation(op, idx);
         }
     }
     return 0;
+}
+
+void set_transformation(std::string &op, int idx)
+{
+    if (op == "Translate")
+    {
+        double dx, dy;
+        cin >> dx >> dy;
+        transformations[idx] = {'T', dx, dy};
+    }
+    else if (op == "Scale")
+    {
+        double sx, sy;
+        cin >> sx >> sy;
+        transformations[idx] = {'S', sx, sy};
+    }
+    else if (op == "Rotate")
+    {
+        double d;
+        cin >> d;
+        transformations[idx] = {'R', d, 0};
+    }
 }
