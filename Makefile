@@ -1,9 +1,9 @@
 CXX = g++
 CXXFLAGS = -std=c++20 -Wall -Wextra -O2
 
-SRC = fenwick.cpp
+SRC = main.cpp
 OBJ = $(SRC:.cpp=.o)
-EXE = fenwick
+EXE = exe
 
 # Targets
 all: $(EXE)
