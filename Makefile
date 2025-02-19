@@ -11,9 +11,6 @@ all: $(EXE)
 $(EXE): $(OBJ)
 	$(CXX) $(CXXFLAGS) -o $(EXE) $(OBJ)
 
-main.o: main.cpp main.h
-	$(CXX) $(CXXFLAGS) -c main.cpp -o main.o
-
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
