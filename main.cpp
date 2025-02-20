@@ -4,60 +4,47 @@
 #include <sstream>
 #include <iomanip>
 
-#define MAX_N 100000
-#define MAX_Q 50000
+#define MAX_N 10000
+#define MAX_Q 5000
 
 using namespace std;
-using Matrix = vector<vector<double>>;
+using Matrix = array<array<double, 3>, 3>;
 
-Matrix get_identity() {
-    return {
+inline Matrix get_identity() {
+    return {{
         {1,0,0},
         {0,1,0},
         {0,0,1}
-    };
+    }};
 }
 
-Matrix multiply_matrices(Matrix &A, Matrix &B) {
-    auto result = get_identity();
-    for (int i = 0; i < 3; ++i) {
-        for (int j = 0; j < 3; ++j) {
-            result[i][j] = 0;
-            for (int k = 0; k < 3; k++) {
+inline Matrix multiply_matrices(Matrix &A, Matrix &B) {
+    Matrix result = {};
+    for (int i = 0; i < 3; i++)
+        for (int k = 0; k < 3; k++)
+            for (int j = 0; j < 3; j++)
                 result[i][j] += A[i][k] * B[k][j];
-            }
-        }
-    }
     return result;
 }
 
-unsigned int get_left_child_index(unsigned int index) {
+inline unsigned int get_left_child_index(unsigned int index) {
     return 2*index + 1;
 }
 
-unsigned int get_right_child_index(unsigned int index) {
+inline unsigned int get_right_child_index(unsigned int index) {
     return 2*index + 2;
-}
-
-vector<Matrix> new_matrix_vector(unsigned int n) {
-    vector<Matrix> matrix_vector;
-    for (unsigned int i = 0; i < n; ++i) {
-        matrix_vector.push_back(get_identity());
-    }
-    return matrix_vector;
 }
 
 struct SegmentTree {
     unsigned int n;
-    vector<Matrix> t_tranformations;
+    array<Matrix, 4*MAX_N> t_tranformations;
 
-    SegmentTree(vector<Matrix> a) {
-        n = a.size();
-        t_tranformations = new_matrix_vector(4*n);
+    SegmentTree(array<Matrix, MAX_N> a, unsigned int _n) {
+        n = _n;
         build(a);
     }
 
-    void build(vector<Matrix> a, int v, int tl, int tr) {
+    void build(array<Matrix, MAX_N> a, int v, int tl, int tr) {
         if (tl == tr) {
             t_tranformations[v] = a[tl];
         } else {
@@ -66,12 +53,11 @@ struct SegmentTree {
             int ir = get_right_child_index(v);
             build(a, il, tl, tm);
             build(a, ir, tm+1, tr);
-            auto composition_of_children = multiply_matrices(t_tranformations[ir], t_tranformations[il]);
-            t_tranformations[v] = composition_of_children;
+            t_tranformations[v] = multiply_matrices(t_tranformations[ir], t_tranformations[il]);
         }
     }
 
-    void build(vector<Matrix> a) {
+    inline void build(array<Matrix, MAX_N> a) {
         build(a, 0, 0, n-1);
     }
 
@@ -88,7 +74,7 @@ struct SegmentTree {
         return multiply_matrices(R, L);
     }
 
-    Matrix get_composed(int l, int r) {
+    inline Matrix get_composed(int l, int r) {
         return get_composed(0, 0, n-1, l, r);
     }
 
@@ -108,19 +94,19 @@ struct SegmentTree {
         }
     }
 
-    void update(int pos, Matrix matrix) {
+    inline void update(int pos, Matrix matrix) {
         update(0, 0, n-1, pos, matrix);
     }
 };
 
-tuple<double, double, double> apply_matrix(Matrix A, int x, int y, int z) {
+inline tuple<double, double, double> apply_matrix(Matrix A, int x, int y, int z) {
     double new_x = A[0][0] * x + A[0][1] * y + A[0][2] * z;
     double new_y = A[1][0] * x + A[1][1] * y + A[1][2] * z;
     double new_z = A[2][0] * x + A[2][1] * y + A[2][2] * z;
     return {new_x, new_y, new_z};
 }
 
-pair<double, double> apply_transformations(int x, int y, int l, int r, SegmentTree &st) {
+inline pair<double, double> apply_transformations(int x, int y, int l, int r, SegmentTree &st) {
     auto composed_transformation = st.get_composed(l, r);
     auto [new_x, new_y, new_z] = apply_matrix(composed_transformation, x, y, 1);
     return {new_x, new_y};
@@ -130,28 +116,28 @@ Matrix get_tranformation_matrix_from_cin(std::string &op) {
     if (op == "Translate") {
         double dx, dy;
         cin >> dx >> dy;
-        return {
+        return {{
             {  1,   0,  dx},
             {  0,   1,  dy},
             {  0,   0,   1}
-        };
+        }};
     } else if (op == "Scale") {
         double sx, sy;
         cin >> sx >> sy;
-        return {
+        return {{
             { sx,   0,   0},
             {  0,  sy,   0},
             {  0,   0,   1}
-        };
+        }};
     } else if (op == "Rotate") {
         double d;
         cin >> d;
         d *= (M_PI / 180); // convert to radians
-        return {
+        return {{
             { cos(d),-sin(d), 0},
             { sin(d), cos(d), 0},
             {      0,      0, 1}
-        };
+        }};
     } else {
         throw invalid_argument("Unrecognized matrix operation.");
     }
@@ -161,16 +147,16 @@ int main() {
     unsigned int n, q;
     cin >> n >> q;
 
-    vector<Matrix> a_transformations;
+    array<Matrix, MAX_N> a_transformations;
 
     for (unsigned int i = 0; i < n; i++) {
         string op;
         cin >> op;
-        a_transformations.push_back(get_tranformation_matrix_from_cin(op));
+        a_transformations[i] = get_tranformation_matrix_from_cin(op);
     }
 
-    SegmentTree segment_tree(a_transformations);
-    
+    SegmentTree segment_tree(a_transformations, n);
+
     for (unsigned int i = 0; i < q; i++) {
         char type;
         cin >> type;
