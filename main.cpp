@@ -4,8 +4,8 @@
 #include <sstream>
 #include <iomanip>
 
-#define MAX_N 10000
-#define MAX_Q 5000
+#define MAX_N 100000
+#define MAX_Q 50000
 
 using namespace std;
 using Matrix = array<array<double, 3>, 3>;
@@ -37,14 +37,15 @@ inline unsigned int get_right_child_index(unsigned int index) {
 
 struct SegmentTree {
     unsigned int n;
-    array<Matrix, 4*MAX_N> t_tranformations;
+    vector<Matrix> t_tranformations;
 
-    SegmentTree(array<Matrix, MAX_N> a, unsigned int _n) {
+    SegmentTree(vector<Matrix> a, unsigned int _n) {
         n = _n;
+        t_tranformations = vector<Matrix>(4*MAX_N);
         build(a);
     }
 
-    void build(array<Matrix, MAX_N> a, int v, int tl, int tr) {
+    void build(vector<Matrix> a, int v, int tl, int tr) {
         if (tl == tr) {
             t_tranformations[v] = a[tl];
         } else {
@@ -57,7 +58,7 @@ struct SegmentTree {
         }
     }
 
-    inline void build(array<Matrix, MAX_N> a) {
+    inline void build(vector<Matrix> a) {
         build(a, 0, 0, n-1);
     }
 
@@ -147,7 +148,7 @@ int main() {
     unsigned int n, q;
     cin >> n >> q;
 
-    array<Matrix, MAX_N> a_transformations;
+    vector<Matrix> a_transformations(MAX_N);
 
     for (unsigned int i = 0; i < n; i++) {
         string op;
