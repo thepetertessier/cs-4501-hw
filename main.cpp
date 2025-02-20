@@ -38,11 +38,11 @@ Matrix multiply_matrices(Matrix A, Matrix B) {
 }
 
 unsigned int get_left_child_index(unsigned int index) {
-    return 2*(index+1) - 1;
+    return 2*index + 1;
 }
 
 unsigned int get_right_child_index(unsigned int index) {
-    return 2*(index+1);
+    return 2*index + 2;
 }
 
 vector<Matrix> new_matrix_vector(unsigned int n) {
@@ -72,7 +72,7 @@ struct SegmentTree {
             int ir = get_right_child_index(v);
             build(a, il, tl, tm);
             build(a, ir, tm+1, tr);
-            auto composition_of_children = multiply_matrices(t_tranformations[il], t_tranformations[ir]);
+            auto composition_of_children = multiply_matrices(t_tranformations[ir], t_tranformations[il]);
             t_tranformations[v] = composition_of_children;
         }
     }
@@ -91,7 +91,7 @@ struct SegmentTree {
         int tm = (tl + tr) / 2;
         auto L = get_composed(get_left_child_index(v), tl, tm, l, min(r, tm));
         auto R = get_composed(get_right_child_index(v), tm+1, tr, max(tm+1, l), r);
-        return multiply_matrices(L, R);
+        return multiply_matrices(R, L);
     }
 
     Matrix get_composed(int l, int r) {
@@ -110,7 +110,7 @@ struct SegmentTree {
             } else {
                 update(ir, tm+1, tr, pos, new_transformation);
             }
-            t_tranformations[v] = multiply_matrices(t_tranformations[il], t_tranformations[ir]);
+            t_tranformations[v] = multiply_matrices(t_tranformations[ir], t_tranformations[il]);
         }
     }
 
@@ -152,6 +152,7 @@ Matrix get_tranformation_matrix_from_cin(std::string &op) {
     } else if (op == "Rotate") {
         double d;
         cin >> d;
+        d *= (M_PI / 180); // convert to radians
         return {
             { cos(d),-sin(d), 0},
             { sin(d), cos(d), 0},
