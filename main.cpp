@@ -10,12 +10,6 @@
 using namespace std;
 using Matrix = vector<vector<double>>;
 
-const Matrix IDENTITY = {
-    {1,0,0},
-    {0,1,0},
-    {0,0,1}
-};
-
 Matrix get_identity() {
     return {
         {1,0,0},
@@ -24,7 +18,7 @@ Matrix get_identity() {
     };
 }
 
-Matrix multiply_matrices(Matrix A, Matrix B) {
+Matrix multiply_matrices(Matrix &A, Matrix &B) {
     auto result = get_identity();
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {

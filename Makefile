@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -g -std=c++20 -Wall -Wextra -O2
+CXXFLAGS = -O3 -march=native -mtune=native -ffast-math -flto -std=c++20
 
 SRC = main.cpp
 OBJ = $(SRC:.cpp=.o)
